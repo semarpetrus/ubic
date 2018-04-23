@@ -8,8 +8,8 @@
 For example, to learn more about the functionality and options of pwd, enter the command: `man pwd`.
 This displays a page that has a description of the program as well as the options you can utilize with it.
 Now press "q" to quit.
----------------------------------------------------------------
-### Relative Paths and Absolute Paths
+
+## Relative Paths and Absolute Paths
 #### Set-up
 * We will be making three directories ubic1, ubic2, and ubic3.
 * To make a directory, use the make directory command `mkdir`. mkdir uses the first variable as the name of the directory to be created.
@@ -52,7 +52,6 @@ to /home/linux/ieng6/oce/5g/spetrus/ubic1
 the command is: `cd /home/linux/ieng6/oce/5g/spetrus/ubic1`.  
 _It is very important to include the forward slash "/" to the beginning of the directory._
 * If you're not sure where your program will be launching from or you are referencing a file that is much further than the one you are currently in, it is easier and more reliable to use hard links.
-------------------------------------------------------------------------
 ## Autocomplete
 #### Set-up
 * We will need to download some files to demonstrate how the autocomplete functionality.  
@@ -87,14 +86,12 @@ Type `ls example`
 Press **Tab**  
 Press **Tab** again
 
--------------------------------------------------------------------
 
 ## The Wildcard  "*"
 * We can use **"*"** as a filler to select more than one file with specific attributes, for example:  
 If we want all the files that have a "txt" extension, the command would be:
 `ls *.txt`
 
-------------------------------------------------------------------
 ## Exploring Files
 * This Section will cover ways to view the content of a file without opening it in an editor.
 
@@ -129,7 +126,6 @@ Write the  entire content of the file to the terminal.
 `cat man.example.out`  
 `cat` will display the entire the content of the file on the terminal.
 
---------------------------------------------------------------
 
 ## Quick Analysis
 #### Set-up
@@ -143,14 +139,14 @@ Options:
 ##### Cut
 `cut`  
 Cuts each line at a delimiter
-Options:
--f# : selects the #th field
--d : specifies the delimiter (Default is tab)
-So the command:
-`cut -d ',' -f3 filename`
-If the filename contents look like this:
-A,B,C,D
-It would display
+Options:  
+-f# : selects the #th field  
+-d : specifies the delimiter (Default is tab)  
+So the command:  
+`cut -d ',' -f3 filename`  
+If the filename contents look like this:  
+A,B,C,D  
+It would display  
 C
 ##### sort
 `sort`  
