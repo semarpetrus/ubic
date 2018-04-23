@@ -128,6 +128,7 @@ _More and Less operate very similarly, but more writes the content to the termin
 Write the  entire content of the file to the terminal.  
 `cat man.example.out`  
 `cat` will display the entire the content of the file on the terminal.
+
 --------------------------------------------------------------
 
 ## Quick Analysis
@@ -143,10 +144,10 @@ Options:
 `cut`  
 Cuts each line at a delimiter
 Options:
--f# : selects the # field
+-f# : selects the #th field
 -d : specifies the delimiter (Default is tab)
 So the command:
-cut -d ',' -f3 filename
+`cut -d ',' -f3 filename`
 If the filename contents look like this:
 A,B,C,D
 It would display
@@ -170,9 +171,11 @@ For example, since `uniq` needs the similar lines to be consecutive, we can `sor
 
 #### Now that set-up is complete
 
-* If you use `head` to look at the header of the **man.example.out**, you will see that the file consists of:  
+* If you use `head` to look at the header of the **man.example.out**, you will see that the file consists of:
+
 Type	| Score |	PPV |	Id |	desc  
 :---:|:---:|:---:|:---:|:---:  
+
 Description (desc) in this case is more verbose and can give us a better idea of what we're looking at.
 Our objective is to see how many of each description there is.
 
