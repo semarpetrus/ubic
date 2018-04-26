@@ -1,4 +1,4 @@
-# Intro to Bash and Python
+# Intro to Bash
 ## Directories and Navigation
 * Directory is the equivalent to folders. Your working directory is where you are currently in the computer/server.
   * To get the path to your working directory use the print working directory command `pwd`.
@@ -192,4 +192,28 @@ To view the top 5 we will use `head` with the option **-n**:
 `cut -f5 man.example.out | sort | uniq -c | sort -rn | head -n5`  
 Now let's write the results to a file we will call **man.example.top_5.out**:  
 `cut -f5 man.example.out | sort | uniq -c | sort -rn | head -n5 > man.example.top.out`  
-# AND THERE YOU HAVE IT!
+## AND THERE YOU HAVE IT!
+
+## Post Finals Bonefire
+* Before we move on to the next step, we're going to clear our work area.
+#### remove
+* The remove command is `rm`.
+**Be Warned! `rm` is a powerful command that will delete the files.
+Your files are not sent to a bin or anywhere where you could recover it easily.
+Use this power responsibly and with certainty.**
+* To remove a file, the command is `rm filename`. This will only remove files with no permission issues.
+* To remove a directory you have to include the **recursive** option `-r` which instructs the remove command to remove all of the files and if a directory is encountered then open the directory and repeat and finally remove the directory.
+* If you encounter an error while removing a file and you are certain you want to remove it, you can use the **force** option `-f`.
+* To clear the ubic3 directory, run the command `rm -r ubic3` from its parent directory.
+* Repeat to remove the rest of the directories.
+
+## Running Commands
+#### Set-up
+* Make a directory for sample files and call it **data**
+* Move into the **data** directory and download the following file:
+https://raw.githubusercontent.com/semarpetrus/ubic/master/Sample1.fa.gz
+##### Copy
+* Let's make a copy of this file using the copy command `cp`. Let's the name the copy Sample2.fa.gz: `cp Sample1.fa.gz Sample2.fa.gz`
+##### Rename
+* The name Sample2 indicates that it is another sample when in reality it's just a copy so let's rename the file.
+* We can rename the file using the move command `mv`. Our command will look like `mv Sample2.fa.gz Sample1_copy.fa.gz`
