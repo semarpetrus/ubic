@@ -207,7 +207,8 @@ Use this power responsibly and with certainty.**
 * To clear the ubic3 directory, run the command `rm -r ubic3` from its parent directory.
 * Repeat to remove the rest of the directories.
 
-## Running Commands
+## Running Commands and Bash Scripting
+**Note: the files in this section were modified for the purposes of the guide. Some aspects will not make sense! and some of the methods are inefficient!**
 #### Set-up
 * Make a directory for sample files and call it **data**
 * Move into the **data** directory and download the following file:
@@ -216,4 +217,117 @@ https://raw.githubusercontent.com/semarpetrus/ubic/master/Sample1.fa.gz
 * Let's make a copy of this file using the copy command `cp`. Let's the name the copy Sample2.fa.gz: `cp Sample1.fa.gz Sample2.fa.gz`
 ##### Rename
 * The name Sample2 indicates that it is another sample when in reality it's just a copy so let's rename the file.
-* We can rename the file using the move command `mv`. Our command will look like `mv Sample2.fa.gz Sample1_copy.fa.gz`
+* We can rename the file using the move command `mv`. Our command will look like  
+`mv Sample2.fa.gz Sample1_copy.fa.gz`
+#### Soft Link
+* A lot of times, the data you want to use is stored in a different directory from the one you execute the commands from.
+* To simulate this, we will go to the parent of **data** and create another directory called **work**. You should now have **data** and **work** on the same level.
+* Change into the **work** directory.
+* Since the data files we want to work with are not in the current directory, every time we want to use them, we have to reference them using an absolute path or relative path. This is fine for our case since the relative path would simply be `../data/Sample1.fa.gz`. However, in practice, the paths can very long and convoluted.
+* An easy way to reference the files we want to work with is set up a link in the current directory to those files, or the directory referencing them.
+* We do this using the **link** command `ln`. We will also use the **soft link** option `-s`. Soft links point the file, but does not contain any data. This is ideal for saving memory.
+* The link command should look like `ln -s target_path link`.
+* For us it will be:  
+`ln -s ../data data`
+* Now if you look in your directory you should have a link called **data**.
+* To see where this link points to, use the list command with the long listing format option `-l`:  
+`ls -l`  
+You should see **data** with a lot of information to its left and to the right you should see an arrow pointing to the location of the target:  
+data -> ../data/
+* If you list the files in **data** you will see the same content in **../data**.
+
+#### Now that set-up is complete
+* Let's inspect the data we have.
+* Looking at the file name and extensions, we can see that it is in **fa** format and **gz** format.
+* The **fa** format is a commonly used bioinformatics format that consists of two lines:
+  1. The header.
+  2. The sequence.
+* The **gz** extension indicates that it has been compressed using `gzip`.
+* Since we only want to look at the data without extracting the files we will use the command `zcat`
+##### zcat
+* `zcat` outputs the content of a zipped file without extracting the files.
+_Note: `zcat` still has to decompress the file which might take time and is storing that information in memory until it is done with it. Consider the storage cost VS run time and memory usage when deciding between extracting the files or using `zcat`._
+* Run `zcat data/Sample.1.fa.gz | head` to see the first few lines.
+* Your output should consist of a repetition of the header which starts with **">"** and the sequence.
+* Next extract the file using the unzip command `gunzip`.
+#### Splititng the data
+* We would like to split the sequences in the file based of off length.
+* For this we will use a script.
+* Create a directory in **work** called **bin** and change into it.
+
+### Writing and Executing Script
+Download the **split_len.sh** script from https://raw.githubusercontent.com/semarpetrus/ubic/master/split_len.sh  
+Make sure the script is in **bin** and change directory to **work**.
+#### Script Breakdown
+Our script takes in 4 arguments:
+1. $1 -> input file path
+2. $2 -> if length is less that this then put sequence in first output otherwise put it in second output
+3. $3 -> First output file path
+4. $4 -> Second output file path
+
+##### Code breakdown
+Initiate the output files  
+`echo '' > $3`  
+`echo '' > $4`  
+Set a handler for the input file to keep the stream open as we loop through it  
+`exec 5< $1`  
+Read the next line in the file using a while loop. While loops have the format: while condition; do ... ; done  
+`while read header <&5`  
+`do`  
+  Read next line  
+  `read seq <&5`  
+  Calculate the length of the sequence. We can use the output of a command by inserting in `$()`.  
+  `seq_len=$(echo $seq | wc -c)`  
+  Check if the length is less than or equal to cut off. If statements have the format: if condition; then; else; fi  
+  `if [[ $seq_len -le $2 ]]`  
+  `then`  
+    `echo $header >> $3`  
+    `echo $seq >> $3`  
+  `else`  
+    `echo $header >> $4`  
+    `echo $seq >> $4`  
+  `fi`  
+`done`  
+##### Executing the Script
+###### 1. Using bash or source
+We can run the command using its shell **bash**. Our command would be:  
+`bash bin/split_len.sh data/Sample1.fa 1000 Sample1_le_1000.fa Sample1_gt_1000.fa`  
+We can also use **source**. Source uses the system's default shell. For example Tshell or bash. So make sure you know what shell is being used by **source** before running the command. The command would be:  
+`source bin/split_len.sh data/Sample1.fa 1000 Sample1_le_1000.fa Sample1_gt_1000.fa`
+###### 2. Changing file to executable
+We can change the file permissions to treat our script as an executable using `chmod`.
+####### chmod
+Run the command `ls -l bin`  
+You will get a list of the files in the directory with other information including permissions which looks like:
+**- --- --- ---**  
+The first dash is indicates type, for example: blank means file, d mean directory, l means link.  
+The next three sets of three dash correspond to User who owns the file, group, all users.  
+Each set of three dashes correspond to: r -> read, w -> write, x -> execute. 
+Our command will be `chmod a+x bin/split_len.sh`. The a+x options stand for:
+  1. a: all users (u: user who owns it, g: group)
+  2. +: add (-: remove)
+  3. x: executable (r: read, w: write)
+Now we can run the script as:
+`bin/split_len.sh data/Sample1.fa 1000 Sample1_le_1000.fa Sample1_gt_1000.fa`
+####### Adding to $PATH
+The `$PATH` variable is a system variable that contains paths for directory that contain executables. Adding our bin directory would mean that we can run the script from anywhere without having to give the full path to the script. To change and environmental variable we use the command `export`:  
+`export PATH=$PATH:/path/to/bin`  
+Now we can run the script as:
+`split_len.sh data/Sample1.fa 1000 Sample1_le_1000.fa Sample1_gt_1000.fa`
+#### Running the command
+Now execute the command in any of the ways mentioned above.  
+You might notice that it is taking sometime, and you might want to do something else in the meanwhile.  
+Cancel the script using `ctrl+c`.  
+##### Running the background using &
+You can programs in the background by putting **&** after the command. So our command will be:  
+`bash bin/split_len.sh data/Sample1.fa 1000 Sample1_le_1000.fa Sample1_gt_1000.fa &`  
+When you run this you will get something like **[1] 16960**. The second number is an ID you can use to identify your script.
+##### top
+You can check what programs are running by using the command `top`.
+Run this command and you will a list of program with other information such as ID, CPU usage, Mem usage, and others.
+To exit `top`, press **q**.
+##### Stopping Background Script
+To stop a script that is running in the background, use the command `kill` and the ID of the program. Command would be:  
+`kill 16960`
+
+## You can run the script and see what you get, but that is all for this guide.
