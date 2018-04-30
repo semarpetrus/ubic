@@ -2,14 +2,12 @@
 # $2: cutoff
 # $3: first output
 # $4: second output
-IFS=
-file_content=$(zcat $1)
-headers=$(echo $file_content | grep '>')
-IFS=$' \t\n'
-for header in $headers
+echo '' > $3
+echo '' > $4
+exec 5< $1
+while read header <&5
 do
-  IFS=
-  seq=$(echo $file_content | grep -A1 $header | tail -n1)
+  read seq <&5
   seq_len=$(echo $seq | wc -c)
   if [[ $seq_len -le $2 ]]
   then
