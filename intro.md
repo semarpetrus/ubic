@@ -2,9 +2,9 @@
 ## Directories and Navigation
 * Directory is the equivalent to folders. Your working directory is where you are currently in the computer/server.
   * To get the path to your working directory use the print working directory command `pwd`.
-* Linux has a set of pre-installed programs (like pwd) that are very efficient in their functionality and run-time. You call the programs using their commands.
-* To stop a program while it is running, enter "ctrl c". Note that this is very useful if your program enters a loop, has wrong syntax for the call, or is simply taking too long and you need to be somewhere else.
-* To learn more about the commands you can use the command `man`.
+* Linux has a set of pre-installed programs (like `pwd`) that are very efficient in their functionality and run-time. You call the programs using their commands.
+* To stop a program while it is running, enter `ctrl c`. Note that this is very useful if your program enters a loop, has wrong syntax for the call, or is simply taking too long and you need to be somewhere else.
+* To learn more about the commands you can use the command `man NAMEOFCOMMAND`.
 For example, to learn more about the functionality and options of pwd, enter the command: `man pwd`.
 This displays a page that has a description of the program as well as the options you can utilize with it.
 Now press "q" to quit.
@@ -16,8 +16,8 @@ Now press "q" to quit.
 Therefore, our command will be: `mkdir ubic1`.  
 Now repeat the process for ubic2, and ubic3
 * To see if the directory was created we can check what is in the current directory using the ls command: `ls`.  
-_Note: ls has many options that can be used to see hidden files and file information. Highly recommend looking at man ls._
-* To move into the new directory we use the change directory command: `cd`. Similarly to mkdir, the first variable is the name of the directory you would like to move into.
+_Note: `ls` has many options that can be used to see hidden files and file information. Highly recommend looking at `man ls`._
+* To move into the new directory we use the change directory command: `cd`. Similarly to `mkdir`, the first variable is the name of the directory you would like to move into.
 Therefore, the command is: `cd ubic1`.  
 _Use `pwd`  to verify that you are in the new directory._
 
@@ -57,15 +57,18 @@ _It is very important to include the forward slash "/" to the beginning of the d
 * We will need to download some files to demonstrate how the autocomplete functionality.  
 ##### wget
 * We will use wget to download files
-* Use this command to download the example files to follow along:  
-`wget https://raw.githubusercontent.com/semarpetrus/ubic/master/example1.name.txt`  
-`wget https://raw.githubusercontent.com/semarpetrus/ubic/master/example2.name.txt`  
-`wget https://raw.githubusercontent.com/semarpetrus/ubic/master/example3.name.txt`
-* wget downloads files to the current directory.  
+* Use this command to download the example files to follow along:
+```
+wget https://raw.githubusercontent.com/semarpetrus/ubic/master/example1.name.txt  
+wget https://raw.githubusercontent.com/semarpetrus/ubic/master/example2.name.txt  
+wget https://raw.githubusercontent.com/semarpetrus/ubic/master/example3.name.txt
+```
+
+* `wget` downloads files to the current directory.  
 _Use `ls` to see if the files have been downloaded._
 ##### curl
-* cURL can also be used to download the files.
-* cURL outputs what is in the link onto the terminal. So we will need to redirect the output to a file to save it.
+* `cURL` can also be used to download the files.
+* `cURL` outputs what is in the link onto the terminal. So we will need to redirect the output to a file to save it.
 ###### Redirecting
   * To redirect the output of a program into a file you use the greater sign **">"** after the command and the name of the file you would like to write the output to after the sign, as such:  
 `pwd > example1.txt`  
@@ -95,35 +98,50 @@ If we want all the files that have a "txt" extension, the command would be:
 ## Exploring Files
 * This Section will cover ways to view the content of a file without opening it in an editor.
 
-* Use wget or cURL to download the file from:  
+* Use `wget` or `cURL` to download the file from:  
 https://raw.githubusercontent.com/semarpetrus/ubic/master/anno.noid.out  
 Name the output file **man.example.out**  
 _Use `man wget` to see how you can output to a specific file._  
 _Use ls to see if the file has been downloaded._
+
 ##### head
 Display the first lines of the file.
+```
 head -n10 man.example.out
+```
 -n option specifies the number of lines to be displaced
 This command will display the first 10 lines
+
 ##### tail
 Display the last lines of the files.  
-`tail -n10 man.example.out`  
+```
+tail -n10 man.example.out  
+```
 -n option specifies the number of lines to display  
 This command will display the last 10 lines
+
 ##### more
 Display a block of the file.  
-`more man.example.out`  
+```
+more man.example.out  
+```
 `more` will start at the start of the file and you can use the space bar to move down the file.  
 Press **q** to exit
+
 ##### less
 Display a block of the file.  
-`less man.example.out`  
+```
+less man.example.out
+```
 `less` will start at the start of the file and you can use the space bar to move down the file.  
 Press **q** to exit.  
 _More and Less operate very similarly, but more writes the content to the terminal and less writes to a separate window that you need to quit. When you exit more, the file content will still be on the terminal and you can scroll back to see it, but with less you can't see the content once you've exited_
+
 ##### cat
 Write the  entire content of the file to the terminal.  
-`cat man.example.out`  
+```
+cat man.example.out
+```
 `cat` will display the entire the content of the file on the terminal.
 
 
@@ -266,28 +284,35 @@ Our script takes in 4 arguments:
 4. $4 -> Second output file path
 
 ##### Code breakdown
-Initiate the output files  
-`echo '' > $3`  
-`echo '' > $4`  
-Set a handler for the input file to keep the stream open as we loop through it  
-`exec 5< $1`  
-Read the next line in the file using a while loop. While loops have the format: while condition; do ... ; done  
-`while read header <&5`  
-`do`  
-  Read next line  
-  `read seq <&5`  
-  Calculate the length of the sequence. We can use the output of a command by inserting in `$()`.  
-  `seq_len=$(echo $seq | wc -c)`  
-  Check if the length is less than or equal to cut off. If statements have the format: if condition; then; else; fi  
-  `if [[ $seq_len -le $2 ]]`  
-  `then`  
-    `echo $header >> $3`  
-    `echo $seq >> $3`  
-  `else`  
-    `echo $header >> $4`  
-    `echo $seq >> $4`  
-  `fi`  
-`done`  
+```shell
+#Initiate the output files 
+echo '' > $3  
+echo '' > $4
+
+#Set a handler for the input file to keep the stream open as we loop through it  
+exec 5< $1
+
+#Read the next line in the file using a while loop. While loops have the format: while condition; do ... ; done  
+while read header <&5  
+do  
+  #Read next line  
+  read seq <&5
+  
+  #Calculate the length of the sequence. We can use the output of a command by inserting in "$()"  
+  seq_len=$(echo $seq | wc -c)  
+  
+  #Check if the length is less than or equal to cut off. If statements have the format: if condition; then; else; fi 
+  if [[ $seq_len -le $2 ]]
+  then  
+    echo $header >> $3`  
+    echo $seq >> $3  
+  else  
+    echo $header >> $4  
+    echo $seq >> $4
+  fi
+done  
+```
+
 ##### Executing the Script
 ###### 1. Using bash or source
 We can run the command using its shell **bash**. Our command would be:  
